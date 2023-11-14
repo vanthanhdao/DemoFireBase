@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react'
-import { Button, Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, Button, Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { HelperText } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';

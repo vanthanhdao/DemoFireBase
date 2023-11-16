@@ -33,7 +33,7 @@ const Signup = ({ navigation }) => {
     const handleLogin = async (email, password) => {
         try {
             await auth().signInWithEmailAndPassword(email, password);
-            navigation.navigate('Home');
+            navigation.navigate('Home', { email: email });
         } catch (error) {
             setErrorMessage("Email or password is incorrect!");
         }

@@ -3,7 +3,9 @@ import { View, TextInput, Button, FlatList, Text, StyleSheet, SafeAreaView, Scro
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Home = () => {
+const Home = ({ route }) => {
+
+    const email = route.params.email
 
     const [task, setTask] = useState('');
     const [tasks, setTasks] = useState([]);
@@ -75,6 +77,7 @@ const Home = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
+                <Text style={styles.text(18)}>{`Hi, ${email}`}</Text>
                 <Text style={styles.text(18)}>To Do App Connect FireBase</Text>
             </View>
             <View style={styles.body}>

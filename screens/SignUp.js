@@ -12,38 +12,6 @@ import {
 import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
 
 
-GoogleSignin.configure({
-    webClientId: '120712118691-am2qt37ava7qnrhs2qijgn2i2eke6n66.apps.googleusercontent.com',
-});
-
-async function onGoogleButtonPress() {
-    try {
-        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-        // Get the users ID token
-        const { idToken } = await GoogleSignin.signIn();
-
-        // Create a Google credential with the token
-        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-        // Sign-in the user with the credential
-        return auth().signInWithCredential(googleCredential);
-    } catch (error) {
-        if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-            // user cancelled the login flow
-            console.log("1 " + statusCodes.SIGN_IN_CANCELLED)
-        } else if (error.code === statusCodes.IN_PROGRESS) {
-            // operation (e.g. sign in) is in progress already
-            console.log("2 " + statusCodes.IN_PROGRESS)
-        } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-            // play services not available or outdated
-            console.log("3 " + statusCodes.PLAY_SERVICES_NOT_AVAILABLE)
-        } else {
-            // some other error happened
-            console.log("4 " + error.message)
-        }
-    }
-}
-
 
 // async function onFacebookButtonPress() {
 //     // Attempt login with permissions
@@ -101,6 +69,41 @@ const Signup = ({ navigation }) => {
 
     };
 
+    GoogleSignin.configure({
+        webClientId: '120712118691-am2qt37ava7qnrhs2qijgn2i2eke6n66.apps.googleusercontent.com',
+    });
+
+    async function onGoogleButtonPress() {
+        try {
+            await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+            // Get the users ID token
+            const { idToken } = await GoogleSignin.signIn();
+
+            // Create a Google credential with the token
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+            // Sign-in the user with the credential
+            await auth().signInWithCredential(googleCredential);
+            navigation.navigate("Home", { email: auth().currentUser.email, uid: auth().currentUser.uid })
+        } catch (error) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                // user cancelled the login flow
+                console.log("1 " + statusCodes.SIGN_IN_CANCELLED)
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                // operation (e.g. sign in) is in progress already
+                console.log("2 " + statusCodes.IN_PROGRESS)
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                // play services not available or outdated
+                console.log("3 " + statusCodes.PLAY_SERVICES_NOT_AVAILABLE)
+            } else {
+                // some other error happened
+                console.log("4 " + error.message)
+            }
+        }
+    }
+
+
+
     return (
         <ScrollView style={styles.container}>
             <View style={styles.image}>
@@ -153,7 +156,7 @@ const Signup = ({ navigation }) => {
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginBottom: 40 }}>
-                    <TouchableOpacity onPress={() => onGoogleButtonPress().then(navigation.navigate("Home", { email: auth().currentUser.email }))}
+                    <TouchableOpacity onPress={() => onGoogleButtonPress()}
                     >
                         <Image style={{ width: 50, height: 50 }} source={{ uri: 'https://image.similarpng.com/very-thumbnail/2020/06/Logo-google-icon-PNG.png' }} />
                     </TouchableOpacity>

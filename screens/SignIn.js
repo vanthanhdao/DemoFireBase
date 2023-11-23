@@ -1,12 +1,18 @@
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Alert, Button, Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { HelperText } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 
-const Signup = ({ navigation }) => {
+
+
+const Signin = ({ navigation }) => {
+
+
+
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -32,12 +38,16 @@ const Signup = ({ navigation }) => {
 
     const handleLogin = async (email, password) => {
         try {
-            await auth().signInWithEmailAndPassword(email, password);
-            navigation.navigate('Home', { email: email });
+            const userCredential = await auth().signInWithEmailAndPassword(email, password);
+            // console.log(userCredential)
+            navigation.navigate('Home', { email: userCredential.user.email, uid: userCredential.user.uid });
         } catch (error) {
             setErrorMessage("Email or password is incorrect!");
+            console.error(error);
         }
     };
+
+
 
 
     return (
@@ -96,7 +106,7 @@ const Signup = ({ navigation }) => {
     )
 }
 
-export default Signup
+export default Signin
 
 const styles = StyleSheet.create({
     container: {

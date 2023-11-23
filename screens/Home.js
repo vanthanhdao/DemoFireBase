@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Home = ({ route }) => {
 
-    const email = route.params.email
+    const { email, uid } = route.params
 
     const [task, setTask] = useState('');
     const [tasks, setTasks] = useState([]);
@@ -15,7 +15,7 @@ const Home = ({ route }) => {
     //Load Data
     useEffect(() => {
         return firestore()
-            .collection('tasks')
+            .collection(`tasks-${uid}`)
             .orderBy('_id')
             .onSnapshot(querySnapshot => {
                 const tasksData = querySnapshot.docs.map(doc => {
@@ -31,20 +31,18 @@ const Home = ({ route }) => {
     //Add Task
     const addTask = async () => {
         if (task.trim().length > 0) {
-            await firestore().collection('tasks').add({
+            await firestore().collection(`tasks-${uid}`).add({
                 _id: tasks.length + 1,
                 content: task,
             }, { timestamps: true })
                 .then(() => console.log('Create Successful Task'))
             setTask("");
-
-
         }
     };
 
     //Delete All Tasks
     const deleteAllTasks = async () => {
-        const tasksRef = firestore().collection('tasks');
+        const tasksRef = firestore().collection(`tasks-${uid}`);
         const tasksSnapshot = await tasksRef.get();
 
         const batch = firestore().batch();
@@ -59,7 +57,7 @@ const Home = ({ route }) => {
     //Delete Task
     const deleteTask = async (taskId) => {
         try {
-            await firestore().collection('tasks').doc(taskId).delete();
+            await firestore().collection(`tasks-${uid}`).doc(taskId).delete();
             console.log('Task deleted!');
         } catch (error) {
             console.error("Error deleting task: ", error);
@@ -68,7 +66,7 @@ const Home = ({ route }) => {
 
     //Edit Task
     const editTask = async () => {
-        firestore().collection('tasks').doc(iddefault).update({
+        firestore().collection(`tasks-${uid}`).doc(iddefault).update({
             content: task,
         }).then(() => {
             console.log('Update Successfully!');

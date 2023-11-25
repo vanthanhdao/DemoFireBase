@@ -4,8 +4,12 @@ import { Alert, Button, Image, ScrollView, StyleSheet, Text, TextInput, Touchabl
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { HelperText } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
+import { useAppState } from '../context/context';
+import firestore from '@react-native-firebase/firestore';
+
 
 const SignInWithPhone = ({ navigation }) => {
+    const { state, dispatch } = useAppState();
     // If null, no SMS has been sent
     const [confirm, setConfirm] = useState(null);
     const [phone, setPhone] = useState('');
@@ -13,11 +17,26 @@ const SignInWithPhone = ({ navigation }) => {
     const [code, setCode] = useState('');
 
     // Handle login
-    function onAuthStateChanged(user) {
+    const onAuthStateChanged = (user) => {
+
         if (user) {
-            console.log(user);
-            navigation.navigate("Home", { email: user.phoneNumber })
+            const USERS = firestore().collection("users")
+            const customer = {
+                phoneNumber: user.phoneNumber,
+                uid: user.uid,
+                signInWith: "Phone Number",
+                role: "customer"
+            }
+            USERS.doc(customer.uid).onSnapshot(async u => {
+                if (!u.exists && !customer.empty && customer.phoneNumber !== null) {
+                    await USERS.doc(customer.uid).set(customer).then(() => console.log("Add customer Success"));
+                }
+            })
+            dispatch({ type: "SET_USER", payload: user });
+            navigation.navigate("HomeScreen")
+
         }
+
     }
 
     useEffect(() => {
@@ -40,7 +59,7 @@ const SignInWithPhone = ({ navigation }) => {
         try {
             await confirm.confirm(code);
         } catch (error) {
-            console.log('Invalid code.');
+            console.log(error);
         }
     }
 
